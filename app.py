@@ -2,16 +2,11 @@ import sys
 print(sys.executable)
 
 from flask import Flask, render_template
-from flask_couchdb import CouchDBManager
+import couchdb
 
 app = Flask(__name__)
-app.config.update(
-    COUCHDB_SERVER="http://localhost:5984",
-    COUCHDB_DATABASE="amazon_project_db",
-)
 
-couchdb = CouchDBManager()
-couchdb.setup(app)
+couchdb_server = couchdb.Server("http://localhost:5984")
 
 @app.route('/')
 def home():
@@ -21,6 +16,10 @@ def home():
         # Add more categories as needed
     ]
     return render_template('home.html', title="Amazon Project - Accueil", categories=categories)
+
+@app.route('/category/<int:category_id>')
+def category(category_id):
+    return render_template('category.html', title=f"Amazon Project - Category {category_id}")
 
 if __name__ == '__main__':
     app.run(debug=True)
